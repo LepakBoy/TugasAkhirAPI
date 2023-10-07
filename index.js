@@ -5,7 +5,7 @@ const cors = require("cors");
 const xss = require("xss-clean");
 const bodyParser = require("body-parser");
 // const port = process.env.PORT || 8080;
-const port = 8000;
+const port = 8002;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(xss());

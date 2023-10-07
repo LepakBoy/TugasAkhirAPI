@@ -1,0 +1,25 @@
+user : 
+id: string;
+role: ["user", "kitchen", "admin"];
+userName: string;
+password: string;
+email: string;
+
+menu : 
+id: string;
+name: string;
+category: string[];
+description: string;
+isAvailable: boolean;
+price: number;
+image: string;
+rating: number (1 - 10)
+
+order (history?) :
+id: string;
+idMenu: string;
+idUser: string;
+status: "progress" | "done" | "rejected";
+time: time 
+date: date_time 
+
