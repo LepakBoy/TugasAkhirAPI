@@ -8,14 +8,14 @@ email: string;
 menu : 
 id: string;
 name: string;
-category: string[];
+category: string["food", "beverage", "add-on", "kuah"];
 description: string;
 isAvailable: boolean;
 price: number;
 image: string;
 rating: number (1 - 10)
 
-order (history?) :
+order ( + history?) :
 id: string;
 idMenu: string;
 idUser: string;
