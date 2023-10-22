@@ -17,9 +17,8 @@ const db = require("./models");
 const Role = db.role;
 // db.sequelize.sync();
 // force: true will drop the table if it already exists
-db.sequelize.sync({force: true}).then(() => {
-  console.log('Drop and Resync Database with { force: true }');
-  initial();
+db.sequelize.sync().then(() => {
+  console.log("Drop and Resync Database with { force: true }");
 });
 
 // simple route
@@ -28,27 +27,27 @@ app.get("/", (req, res) => {
 });
 
 // routes
-require('./routes/auth.routes')(app);
-require('./routes/user.routes')(app);
-
+require("./routes/auth.routes")(app);
+require("./routes/user.routes")(app);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-function initial() {
-  Role.create({
-    id: 1,
-    name: "user"
-  });
- 
-  Role.create({
-    id: 2,
-    name: "kitchen"
-  });
- 
-  Role.create({
-    id: 3,
-    name: "admin"
-  });
-}
+// init data to DB
+// function initial() {
+//   Role.create({
+//     id: 1,
+//     name: "user"
+//   });
+
+//   Role.create({
+//     id: 2,
+//     name: "kitchen"
+//   });
+
+//   Role.create({
+//     id: 3,
+//     name: "admin"
+//   });
+// }

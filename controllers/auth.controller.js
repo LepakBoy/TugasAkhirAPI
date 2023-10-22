@@ -10,42 +10,39 @@ var bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
   // Save User to Database
-      if (req.body.roles) {
-        Role.findAll().then(roles => {
-
+  // klo ga ada role yang diinput saat register, default role akan "user"
+  if (req.body.roles) {
+    Role.findAll()
+      .then((roles) => {})
+      .then(
+        User.create({
+          username: req.body.username,
+          email: req.body.email,
+          password: bcrypt.hashSync(req.body.password, 8),
+          role: req.body.roles,
+        }).then(() => {
+          res.send({ message: "User registered successfully!" });
         })
-        .then(
-          User.create({
-            username: req.body.username,
-            email: req.body.email,
-            password: bcrypt.hashSync(req.body.password, 8),
-            role: req.body.roles
-          }).then(() => {
-            res.send({ message: "User registered successfully!" });
-          })
-        );
-      } else {
-
-          User.create({
-            username: req.body.username,
-            email: req.body.email,
-            password: bcrypt.hashSync(req.body.password, 8),
-            role: "user"
-          }).then(() => {
-            res.send({ message: "User registered successfully!" });
-          })
-        
-      }
-    
+      );
+  } else {
+    User.create({
+      username: req.body.username,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 8),
+      role: "user",
+    }).then(() => {
+      res.send({ message: "User registered successfully!" });
+    });
+  }
 };
 
 exports.signin = (req, res) => {
   User.findOne({
     where: {
-      username: req.body.username
-    }
+      username: req.body.username,
+    },
   })
-    .then(user => {
+    .then((user) => {
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
       }
@@ -58,20 +55,18 @@ exports.signin = (req, res) => {
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
-          message: "Invalid Password!"
+          message: "Invalid Password!",
         });
       }
 
-      const token = jwt.sign({ id: user.id },
-                              config.secret,
-                              {
-                                algorithm: 'HS256',
-                                allowInsecureKeySizes: true,
-                                expiresIn: 86400, // 24 hours
-                              });
+      const token = jwt.sign({ id: user.id }, config.secret, {
+        algorithm: "HS256",
+        allowInsecureKeySizes: true,
+        expiresIn: 86400, // 24 hours
+      });
 
       var authorities = [];
-      user.getRoles().then(roles => {
+      user.getRoles().then((roles) => {
         for (let i = 0; i < roles.length; i++) {
           authorities.push("ROLE_" + roles[i].name.toUpperCase());
         }
@@ -80,11 +75,11 @@ exports.signin = (req, res) => {
           username: user.username,
           email: user.email,
           roles: authorities,
-          accessToken: token
+          accessToken: token,
         });
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({ message: err.message });
     });
 };
