@@ -34,7 +34,7 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-// init data to DB
+// ============== init data to DB
 // function initial() {
 //   Role.create({
 //     id: 1,

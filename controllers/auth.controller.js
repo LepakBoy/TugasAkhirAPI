@@ -37,49 +37,41 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
+  const { password, email } = req.body;
   User.findOne({
     where: {
-      username: req.body.username,
+      email: email,
     },
   })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "User Not found." });
+        return res
+          .status(404)
+          .send({ message: "User not found", status: "failed" });
       }
 
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
+      const validPassword = bcrypt.compareSync(password, user.password);
 
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!",
-        });
+      if (!validPassword) {
+        return res
+          .status(404)
+          .send({ message: "Invalid password", status: "failed" });
       }
 
-      const token = jwt.sign({ id: user.id }, config.secret, {
-        algorithm: "HS256",
-        allowInsecureKeySizes: true,
-        expiresIn: 86400, // 24 hours
+      const token = jwt.sign({ id: user.id, role: user.role }, config.secret, {
+        expiresIn: "24h",
       });
 
-      var authorities = [];
-      user.getRoles().then((roles) => {
-        for (let i = 0; i < roles.length; i++) {
-          authorities.push("ROLE_" + roles[i].name.toUpperCase());
-        }
-        res.status(200).send({
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          roles: authorities,
-          accessToken: token,
-        });
+      res.status(200).send({
+        message: "Success",
+        id: user.id,
+        userName: user.username,
+        role: user.role,
+        accesstoken: token,
       });
     })
     .catch((err) => {
-      res.status(500).send({ message: err.message });
+      console.log(err, "error login");
+      res.status(404).send({ message: "errorr" });
     });
 };
