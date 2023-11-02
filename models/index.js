@@ -17,6 +17,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+// #INIT TABLE TO DB
 db.user = require("../models/user.model.js")(sequelize, Sequelize);
 // db.role = require("../models/role.model.js")(sequelize, Sequelize);
 db.menu = require("../models/menu.model.js")(sequelize, Sequelize);
