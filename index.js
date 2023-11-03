@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome backend application." });
 });
 
-// routes
+// declare all routes here ============
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/menu.routes")(app);
@@ -47,21 +47,18 @@ app.listen(port, () => {
 function createMany() {
   User.bulkCreate([
     {
-      // id: "useradmin1",
       role: "USER",
       email: "user@user.com",
       username: "user canteen",
       password: "user@password",
     },
     {
-      // id: "useradmin1",
       role: "ADMIN",
       email: "admin@admin.com",
       username: "admin canteen",
       password: "admin@password",
     },
     {
-      // id: "useradmin1",
       role: "KITCHEN",
       email: "kitchen@kitchen.com",
       username: "kitchen canteen",
@@ -78,7 +75,7 @@ function createManyMenus() {
       description:
         "Nasi goreng surabaya dengan saos tiram dan kecap manis, yakin enak tuh?",
       isAvailable: true,
-      image: "",
+      image: "nasi-goreng-surabaya",
       rating: "0",
       price: 29000,
     },
@@ -87,8 +84,8 @@ function createManyMenus() {
       category: "FOOD",
       description:
         "Soto betawi dengan kuah santen dan daging ayam tanpa tulang",
-      isAvailable: true,
-      image: "",
+      isAvailable: false,
+      image: "soto-betawi-ayam",
       rating: "0",
       price: 22000,
     },
@@ -98,7 +95,7 @@ function createManyMenus() {
       description:
         "Soto betawi dengan kuah santen dan daging sapi dan jeroan(?), dilengkapi dengan emping dan kuah dan nasi dan bawang goren dan kuah",
       isAvailable: true,
-      image: "",
+      image: "soto-betawi-daging",
       rating: "0",
       price: 25000,
     },
@@ -108,7 +105,7 @@ function createManyMenus() {
       description:
         "Nasi dengan lauk sayur capcay dan ayam crispy berbumbu lada hitam",
       isAvailable: true,
-      image: "",
+      image: "capcay-ayam-ladahitam",
       rating: "0",
       price: 28000,
     },
@@ -116,8 +113,8 @@ function createManyMenus() {
       name: "Ikan nila bakar",
       category: "FOOD",
       description: "Ikan nila yang dibakar, mau diapain lagi?",
-      isAvailable: true,
-      image: "",
+      isAvailable: false,
+      image: "ikan-nila-bakar",
       rating: "0",
       price: 18000,
     },
@@ -126,7 +123,7 @@ function createManyMenus() {
       category: "DRINKS",
       description: "Jus buah alpukat dengan krimer coklat",
       isAvailable: true,
-      image: "",
+      image: "jus-alpukat",
       rating: "0",
       price: 16000,
     },
@@ -134,8 +131,8 @@ function createManyMenus() {
       name: "Es teh tawar",
       category: "DRINKS",
       description: "Es teh tawar tanpa gula dengan es",
-      isAvailable: true,
-      image: "",
+      isAvailable: false,
+      image: "es-teh-tawar",
       rating: "0",
       price: 5000,
     },
