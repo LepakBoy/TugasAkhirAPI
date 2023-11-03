@@ -3,8 +3,8 @@ const { DataTypes } = require("sequelize");
 module.exports = (sequelize, Sequelize) => {
   const Menu = sequelize.define("menus", {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: Sequelize.STRING,
+      // defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     name: {

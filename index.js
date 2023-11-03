@@ -70,6 +70,7 @@ function createMany() {
 function createManyMenus() {
   Menu.bulkCreate([
     {
+      id: "FD-001",
       name: "Nasi goreng surabaya",
       category: "FOOD",
       description:
@@ -80,6 +81,7 @@ function createManyMenus() {
       price: 29000,
     },
     {
+      id: "FD-002",
       name: "Soto betawi ayam",
       category: "FOOD",
       description:
@@ -90,6 +92,7 @@ function createManyMenus() {
       price: 22000,
     },
     {
+      id: "FD-003",
       name: "Soto betawi daging",
       category: "FOOD",
       description:
@@ -100,6 +103,7 @@ function createManyMenus() {
       price: 25000,
     },
     {
+      id: "FD-004",
       name: "Capcay ayam lada hitam",
       category: "FOOD",
       description:
@@ -110,6 +114,7 @@ function createManyMenus() {
       price: 28000,
     },
     {
+      id: "FD-005",
       name: "Ikan nila bakar",
       category: "FOOD",
       description: "Ikan nila yang dibakar, mau diapain lagi?",
@@ -119,6 +124,67 @@ function createManyMenus() {
       price: 18000,
     },
     {
+      id: "FD-006",
+      name: "Bubur kacang ijo",
+      category: "FOOD",
+      description: "Bubur kacang ijo ",
+      isAvailable: true,
+      image: "kacang-ijo",
+      rating: "0",
+      price: 7000,
+    },
+    {
+      id: "FD-007",
+      name: "ketupat-padang",
+      category: "FOOD",
+      description: "Ketupat padang kuah santen",
+      isAvailable: true,
+      image: "ketupat-padang",
+      rating: "0",
+      price: 10000,
+    },
+    {
+      id: "FD-008",
+      name: "Lumpia telor",
+      category: "FOOD",
+      description: "Lumpia telor dengan daging",
+      isAvailable: false,
+      image: "lumpia-telor",
+      rating: "0",
+      price: 10000,
+    },
+    {
+      id: "FD-009",
+      name: "Sate ayam",
+      category: "FOOD",
+      description: "Sate ayam tanpa lemak",
+      isAvailable: true,
+      image: "sate-ayam",
+      rating: "0",
+      price: 22000,
+    },
+    {
+      id: "FD-010",
+      name: "Roti bakar",
+      category: "FOOD",
+      description: "Roti bakar rasa cokelat dengan krimer",
+      isAvailable: true,
+      image: "roti-bakar",
+      rating: "0",
+      price: 10000,
+    },
+    {
+      id: "FD-011",
+      name: "Bakso malang",
+      category: "FOOD",
+      description: "Bakso malang tapi kebanyakan pangsit nya doang",
+      isAvailable: true,
+      image: "bakso-malang",
+      rating: "0",
+      price: 16000,
+    },
+    {
+      id: "DK-001",
       name: "Jus alpukat",
       category: "DRINKS",
       description: "Jus buah alpukat dengan krimer coklat",
@@ -128,6 +194,7 @@ function createManyMenus() {
       price: 16000,
     },
     {
+      id: "DK-002",
       name: "Es teh tawar",
       category: "DRINKS",
       description: "Es teh tawar tanpa gula dengan es",
@@ -135,6 +202,46 @@ function createManyMenus() {
       image: "es-teh-tawar",
       rating: "0",
       price: 5000,
+    },
+    {
+      id: "DK-003",
+      name: "Teh tarik",
+      category: "DRINKS",
+      description: "Teh tarik dingin pake es batu",
+      isAvailable: true,
+      image: "teh-tarik",
+      rating: "0",
+      price: 6000,
+    },
+    {
+      id: "AO-001",
+      name: "Sambal",
+      category: "ADDON",
+      description: "",
+      isAvailable: true,
+      image: "sambal",
+      rating: "0",
+      price: 7000,
+    },
+    {
+      id: "AO-002",
+      name: "Kerupuk",
+      category: "ADDON",
+      description: "",
+      isAvailable: true,
+      image: "kerupuk",
+      rating: "0",
+      price: 5000,
+    },
+    {
+      id: "AO-003",
+      name: "Nasi putih",
+      category: "ADDON",
+      description: "",
+      isAvailable: true,
+      image: "nasi-putih",
+      rating: "0",
+      price: 6000,
     },
   ]);
 }
