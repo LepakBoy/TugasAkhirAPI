@@ -19,10 +19,11 @@ const User = db.user;
 const Menu = db.menu;
 // db.sequelize.sync();
 // force: true will drop the table if it already exists
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and Resync Database with { force: true }");
-  createMany();
-  createManyMenus();
+db.sequelize.sync().then(async () => {
+
+
+  createUser();
+  createMenu();
 });
 
 // simple route
@@ -44,30 +45,43 @@ app.listen(port, () => {
 });
 
 // #INIT DATA TO DB
-function createMany() {
-  User.bulkCreate([
-    {
+async   function createUser() {
+  const existingUser = await User.findOne({ where: { email: 'user@user.com' } });
+  const existingAdmin = await User.findOne({ where: { email: 'admin@admin.com' } });
+  const existingKitchen = await User.findOne({ where: { email: 'kitchen@kitchen.com' } });
+  if (!existingUser) {
+    User.create({
       role: "USER",
       email: "user@user.com",
       username: "user canteen",
-      password: "user@password",
-    },
-    {
+      password: "$2a$08$FGapL7mvz4TecAXCmUdm6u62GXvDnKzmbUkn7Nz83XxJ1bW7fPmfa",
+    });
+
+  }
+  if (!existingAdmin) {
+    User.create(    {
       role: "ADMIN",
       email: "admin@admin.com",
       username: "admin canteen",
-      password: "admin@password",
-    },
-    {
+      password: "$2a$08$hvA862YtT.L1FtCHlNMWDORA1KYqMk5A5UHYbpQNivoE0WKL.rC7K",
+    },);
+
+  }
+  if (!existingKitchen) {
+    User.create(      {
       role: "KITCHEN",
       email: "kitchen@kitchen.com",
       username: "kitchen canteen",
-      password: "kitchen@password",
-    },
-  ]);
+      password: "$2a$08$aNW.prAMbGrIYaNPGeY87uMwmGQHR0iu4vQNmNXzxm3OWLz532/yW",
+    },);
+
+  }
+
 }
 
-function createManyMenus() {
+function createMenu() {
+const existingMenu = Menu.findAll();
+  if (!existingMenu) {
   Menu.bulkCreate([
     {
       id: "FD-001",
@@ -244,4 +258,5 @@ function createManyMenus() {
       price: 6000,
     },
   ]);
+}
 }

@@ -44,15 +44,16 @@ exports.signin = (req, res) => {
     },
   })
     .then((user) => {
+      console.log(user, "ini user")
       if (!user) {
         return res
           .status(404)
           .send({ message: "User not found", status: "failed" });
       }
 
-      // const validPassword = bcrypt.compareSync(password, user.password);
+      const validPassword = bcrypt.compareSync(password, user.password);
       // ########################??????????
-      const validPassword = password === user.password;
+      // const validPassword = password === user.password;
 
       if (!validPassword) {
         return res
