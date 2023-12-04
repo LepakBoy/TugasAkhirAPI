@@ -1,5 +1,7 @@
 const db = require("../models");
 const Menu = db.menu;
+const Order = db.order;
+const OrderDetail = db.orderDetail;
 
 exports.getAllMenu = async (req, res) => {
   let errCode = 0;
@@ -96,4 +98,10 @@ exports.getMenuById = async (req, res) => {
     });
 
   res.status(errCode).send({ message: resMessage, data: targetMenu });
+};
+exports.getMenuAlgoritma = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+  }
 };

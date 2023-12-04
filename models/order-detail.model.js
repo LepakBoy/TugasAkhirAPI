@@ -6,6 +6,7 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+      allowNull: false,
     },
     menuId: {
       type: DataTypes.UUID,
@@ -19,6 +20,12 @@ module.exports = (sequelize, Sequelize) => {
     },
     price: {
       type: Sequelize.INTEGER,
+    },
+    createdDate: {
+      type: Sequelize.DATE,
+    },
+    updatedDate: {
+      type: Sequelize.DATE,
     },
   });
 

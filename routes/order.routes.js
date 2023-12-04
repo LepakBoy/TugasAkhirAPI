@@ -6,4 +6,5 @@ module.exports = function (app) {
 
   app.get("/api/order-by-id", OrderController.getOrderById);
   app.post("/api/order", OrderController.createOrder);
+  app.get("/api/init-order", OrderController.initOrder);
 };

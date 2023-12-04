@@ -7,14 +7,14 @@ module.exports = (sequelize, Sequelize) => {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    timeRequired: {
+    name: {
+      type: Sequelize.STRING(64),
+    },
+    weight: {
       type: Sequelize.INTEGER,
     },
-    numOfOrder: {
-      type: Sequelize.INTEGER,
-    },
-    price: {
-      type: Sequelize.INTEGER,
+    remark: {
+      type: Sequelize.STRING(255),
     },
   });
 
