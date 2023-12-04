@@ -21,6 +21,21 @@ db.sequelize = sequelize;
 db.user = require("../models/user.model.js")(sequelize, Sequelize);
 // db.role = require("../models/role.model.js")(sequelize, Sequelize);
 db.menu = require("../models/menu.model.js")(sequelize, Sequelize);
+db.order = require("../models/order.model.js")(sequelize, Sequelize);
+db.orderDetail = require("../models/order-detail.model.js")(
+  sequelize,
+  Sequelize
+);
+db.criteria = require("../models/criteria.model.js")(sequelize, Sequelize);
+db.canteenStatus = require("../models/canteen-status.model.js")(
+  sequelize,
+  Sequelize
+);
+
+db.order.hasMany(db.orderDetail, { as: "orderDetails", foreignKey: "orderId" });
+db.orderDetail.belongsTo(db.order, {
+  foreignKey: "orderId",
+});
 
 // ============= join table between user and role
 // db.role.belongsToMany(db.user, {

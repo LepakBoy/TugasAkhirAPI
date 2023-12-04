@@ -3,32 +3,33 @@ const { DataTypes } = require("sequelize");
 module.exports = (sequelize, Sequelize) => {
   const Menu = sequelize.define("menus", {
     id: {
-      type: Sequelize.STRING,
-      // defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
+      // type: Sequelize.STRING,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     name: {
-      type: Sequelize.STRING,
+      type: Sequelize.STRING(255),
     },
     category: {
-      type: Sequelize.STRING,
-    },
-    criteria: {
-      type: Sequelize.ARRAY(DataTypes.STRING),
+      type: Sequelize.STRING(64),
     },
     description: {
-      type: Sequelize.STRING,
+      type: Sequelize.STRING(255),
     },
     isAvailable: {
       type: Sequelize.BOOLEAN,
     },
     image: {
-      type: Sequelize.STRING,
-    },
-    rating: {
-      type: Sequelize.STRING,
+      type: Sequelize.STRING(255),
     },
     price: {
+      type: Sequelize.INTEGER,
+    },
+    W_price: {
+      type: Sequelize.INTEGER,
+    },
+    W_time: {
       type: Sequelize.INTEGER,
     },
     // userId: {

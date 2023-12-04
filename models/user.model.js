@@ -20,10 +20,6 @@ module.exports = (sequelize, Sequelize) => {
     role: {
       type: Sequelize.STRING,
     },
-    // role: {
-    //   model: "roles",
-    //   key: "ids"
-    // }
   });
 
   return User;
