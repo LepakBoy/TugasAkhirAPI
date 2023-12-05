@@ -101,7 +101,115 @@ exports.getMenuById = async (req, res) => {
 };
 exports.getMenuAlgoritma = async (req, res) => {
   try {
+    const menus = await Menu.findAll().then((menu) => {
+      if (!menu) {
+        errCode = 404;
+        resMessage = "not found";
+        return;
+      }
+
+      errCode = 200;
+      resMessage = "success";
+      return JSON.parse(JSON.stringify(menu));
+      // simulate error handling
+      // throw new Error("test");
+    });
+    const criteria = await db.criteria.findAll().then((criteria) => {
+      if (!criteria) {
+        errCode = 404;
+        resMessage = "not found";
+        return;
+      }
+
+      errCode = 200;
+      resMessage = "success";
+      return JSON.parse(JSON.stringify(criteria));
+      // simulate error handling
+      // throw new Error("test");
+    });
+    const orderDetail = await db.orderDetail.findAll().then((orderDetail) => {
+      if (!orderDetail) {
+        errCode = 404;
+        resMessage = "not found";
+        return;
+      }
+
+      errCode = 200;
+      resMessage = "success";
+      return JSON.parse(JSON.stringify(orderDetail));
+      // simulate error handling
+      // throw new Error("test");
+    });
+    const wTime = [1, 3, 5];
+    const wPrice = [1, 3, 4, 5];
+    const resultWQuantity = [];
+    const resultWTime = [];
+    const resultWPrice = [];
+    let today = new Date();
+
+    let fiveDaysAgo = new Date();
+    fiveDaysAgo.setDate(today.getDate() - 5);
+    if (menus.length > 0 && criteria.length > 0) {
+      for (let i = 0; i < menus.length; i++) {
+        const menu = menus[i];
+        const menuId = menu.id;
+        const servingTime = menu.servingTime;
+        console.log(servingTime, "servingTime");
+        const price = menu.price;
+        console.log(price, "price");
+        let scoreServingTime = wTime[0];
+        if (servingTime <= 5) {
+          scoreServingTime = wTime[0];
+        } else if (servingTime >= 6 && servingTime <= 10) {
+          scoreServingTime = wTime[1];
+        } else if (servingTime > 10) {
+          scoreServingTime = wTime[2];
+        }
+        let scorePrice = wPrice[0];
+        if (price <= 7000) {
+          scorePrice = wPrice[0];
+        } else if (price >= 8000 && price <= 18000) {
+          scorePrice = wPrice[1];
+        } else if (price >= 19000 && price <= 25000) {
+          scorePrice = wPrice[2];
+        } else if (price >= 26000) {
+          scorePrice = wPrice[3];
+        }
+
+        const count = orderDetail.filter(
+          (obj) =>
+            obj.menuId === menuId && new Date(obj.createdDate) >= fiveDaysAgo
+        ).length;
+        const objResultWQuantity = {
+          menuId: menuId,
+          quantity: count,
+        };
+        const objResultWTime = {
+          menuId: menuId,
+          time: scoreServingTime,
+        };
+        const objResultWPrice = {
+          menuId: menuId,
+          price: scorePrice,
+        };
+        resultWQuantity.push(objResultWQuantity);
+        resultWTime.push(objResultWTime);
+        resultWPrice.push(objResultWPrice);
+
+        console.log(count, "count");
+      }
+    }
+    console.log(
+      resultWQuantity,
+      "resultWQuantity",
+      resultWTime,
+      "resultWTime",
+      resultWPrice,
+      "resultWPrice"
+    );
+    return res.status(200).send({ data: orderDetail });
   } catch (error) {
     console.log(error);
+    return res.status(500).send({ message: "error" });
   }
 };
