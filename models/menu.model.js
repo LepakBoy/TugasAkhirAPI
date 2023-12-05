@@ -26,19 +26,9 @@ module.exports = (sequelize, Sequelize) => {
     price: {
       type: Sequelize.INTEGER,
     },
-    W_price: {
+    servingTime: {
       type: Sequelize.INTEGER,
     },
-    W_time: {
-      type: Sequelize.INTEGER,
-    },
-    // userId: {
-    //   type: Sequelize.STRING,
-    //   references: {
-    //     model: "users",
-    //     key: "id",
-    //   },
-    // },
   });
 
   return Menu;

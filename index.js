@@ -120,6 +120,7 @@ async function createMenu() {
         isAvailable: true,
         image: "nasi-goreng-surabaya",
         price: 29000,
+        servingTime: 15,
       },
       {
         id: "049449c4-288e-4163-b12f-ef1d79463fbc",
@@ -130,6 +131,7 @@ async function createMenu() {
         isAvailable: false,
         image: "soto-betawi-ayam",
         price: 22000,
+        servingTime: 5,
       },
       {
         id: "06976623-3c88-42c0-b09a-2469260c1aa9",
@@ -140,6 +142,7 @@ async function createMenu() {
         isAvailable: true,
         image: "soto-betawi-daging",
         price: 25000,
+        servingTime: 7,
       },
       {
         id: "09350e2e-5466-4b1f-ba15-97251566c6a4",
@@ -150,6 +153,7 @@ async function createMenu() {
         isAvailable: true,
         image: "capcay-ayam-ladahitam",
         price: 28000,
+        servingTime: 15,
       },
       {
         id: "18d71431-bf4f-4a9e-a981-da31beddd681",
@@ -159,6 +163,7 @@ async function createMenu() {
         isAvailable: false,
         image: "ikan-nila-bakar",
         price: 18000,
+        servingTime: 20,
       },
       {
         id: "1fb6c7fa-2f35-45c6-a3a1-dfc33195d85c",
@@ -168,6 +173,7 @@ async function createMenu() {
         isAvailable: true,
         image: "kacang-ijo",
         price: 7000,
+        servingTime: 4,
       },
       {
         id: "2d829c91-208e-40da-bb51-f2a8f4e56c1e",
@@ -177,6 +183,7 @@ async function createMenu() {
         isAvailable: true,
         image: "ketupat-padang",
         price: 10000,
+        servingTime: 7,
       },
       {
         id: "2ea751aa-c3b9-4324-9e02-448ae01fbdcb",
@@ -186,6 +193,7 @@ async function createMenu() {
         isAvailable: false,
         image: "lumpia-telor",
         price: 10000,
+        servingTime: 10,
       },
       {
         id: "38262881-afe1-4b04-9883-db44eff6a9f1",
@@ -195,6 +203,7 @@ async function createMenu() {
         isAvailable: true,
         image: "sate-ayam",
         price: 22000,
+        servingTime: 20,
       },
       {
         id: "5af441e6-c250-4d2c-a260-33b558bbdb3b",
@@ -204,6 +213,7 @@ async function createMenu() {
         isAvailable: true,
         image: "roti-bakar",
         price: 10000,
+        servingTime: 15,
       },
       {
         id: "7c137334-19fd-4397-bf01-cd8edae91dfb",
@@ -213,6 +223,7 @@ async function createMenu() {
         isAvailable: true,
         image: "bakso-malang",
         price: 16000,
+        servingTime: 8,
       },
       {
         id: "be31683c-73bd-4caa-b5c1-a8111a4bbe29",
@@ -222,6 +233,7 @@ async function createMenu() {
         isAvailable: true,
         image: "jus-alpukat",
         price: 16000,
+        servingTime: 7,
       },
       {
         id: "c0f6b5e9-5b0e-4b7e-9e9a-9f6b8b8b6b9e",
@@ -231,6 +243,7 @@ async function createMenu() {
         isAvailable: false,
         image: "es-teh-tawar",
         price: 5000,
+        servingTime: 2,
       },
       {
         id: "c1f5d7c7-8f7e-4f1e-9b7a-2d1c0b7d7d1e",
@@ -240,6 +253,7 @@ async function createMenu() {
         isAvailable: true,
         image: "teh-tarik",
         price: 6000,
+        servingTime: 4,
       },
       {
         id: "c2f5d7c7-8f7e-4f1e-9b7a-2d1c0b7d7d1e",
@@ -250,6 +264,7 @@ async function createMenu() {
         image: "sambal",
 
         price: 7000,
+        servingTime: 1,
       },
       {
         name: "Kerupuk",
@@ -259,6 +274,7 @@ async function createMenu() {
         image: "kerupuk",
 
         price: 5000,
+        servingTime: 1,
       },
       {
         id: "c3f5d7c7-8f7e-4f1e-9b7a-2d1c0b7d7d1e",
@@ -269,32 +285,33 @@ async function createMenu() {
         image: "nasi-putih",
 
         price: 6000,
+        servingTime: 1,
       },
     ]);
   }
 }
 async function createCriteria() {
   const existingCriteria = await criteria.findOne({
-    where: { name: "Harga" },
+    where: { name: "numOfOrder" },
   });
   if (!existingCriteria) {
     criteria.bulkCreate([
       {
         id: "c3f9d7c7-8f7e-4f1e-9b7a-2d1c0b7d7d1e",
         name: "numOfOrder",
-        weight: 0.5,
+        weight: 4,
         remark: "max",
       },
       {
         id: "c3f9d7c7-8f7e-4f1e-9b7a-2d1c0b7d7d2e",
         name: "time",
-        weight: 0.5,
+        weight: 2,
         remark: "min",
       },
       {
         id: "c3f9d7c7-8f7e-4f1e-9b7a-2d1c0b7d7d3e",
         name: "price",
-        weight: 0.5,
+        weight: 4,
         remark: "min",
       },
     ]);

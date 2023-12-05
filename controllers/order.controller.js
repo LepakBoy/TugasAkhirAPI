@@ -342,3 +342,31 @@ exports.initOrder = async (req, res) => {
   await createOrder();
   res.status(200).send({ message: "success" });
 };
+
+exports.getAllOrderDetails = async (req, res) => {
+  let errCode = 0;
+  let resMessage = "";
+
+  const orderDetails = await OrderDetail.findAll()
+    .then((orderDetail) => {
+      if (!orderDetail) {
+        errCode = 404;
+        resMessage = "not found";
+        return;
+      }
+
+      errCode = 200;
+      resMessage = "success";
+      return JSON.parse(JSON.stringify(orderDetail));
+      // simulate error handling
+      // throw new Error("test");
+    })
+    .catch((error) => {
+      errCode = 404;
+      resMessage = "not found";
+      console.log(error, "error get all order detail");
+      return error;
+    });
+
+  res.status(errCode).send({ resMessage: resMessage, data: orderDetails });
+};
