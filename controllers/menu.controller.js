@@ -99,6 +99,107 @@ exports.getMenuById = async (req, res) => {
 
   res.status(errCode).send({ message: resMessage, data: targetMenu });
 };
+const calculateScoreHelper = (
+  tempMenu,
+  resultWQuantity,
+  resultWTime,
+  resultWPrice,
+  criteria
+) => {
+  const pricesArray = resultWPrice.map((menu) => menu.price);
+  const timeArray = resultWTime.map((menu) => menu.time);
+  const quantityArray = resultWQuantity.map((menu) => menu.quantity);
+  const indexQuantityArray = [];
+  const indexTimeArray = [];
+  const indexPriceArray = [];
+  for (let i = 0; i < resultWQuantity.length; i++) {
+    const indexQuantity = pricesArray[i] / Math.max(...pricesArray);
+    indexQuantityArray.push(indexQuantity);
+  }
+  for (let i = 0; i < resultWTime.length; i++) {
+    const indexTime = Math.min(...timeArray) / timeArray[i];
+    indexTimeArray.push(parseFloat(indexTime.toFixed(2)));
+  }
+  for (let i = 0; i < resultWPrice.length; i++) {
+    const indexPrice = Math.min(...pricesArray) / pricesArray[i];
+    indexPriceArray.push(parseFloat(indexPrice.toFixed(2)));
+  }
+
+  return {
+    quantity: indexQuantityArray,
+    time: indexTimeArray,
+    price: indexPriceArray,
+  };
+
+  // console.log(
+  //   indexQuantityArray,
+  //   indexPriceArray,
+  //   indexTimeArray,
+  //   criteria,
+  //   "result"
+  // );
+};
+
+const criteriaWeightCalc = (scoring, criteria) => {
+  const resultQuantityArray = [];
+  const resultTimeArray = [];
+  const resultPriceArray = [];
+
+  if (
+    scoring.quantity.length > 0 &&
+    scoring.time.length > 0 &&
+    scoring.price.length > 0
+  ) {
+    for (let i = 0; i < scoring.quantity.length; i++) {
+      const quantity = scoring.quantity[i];
+      const time = scoring.time[i];
+      const price = scoring.price[i];
+      const weightQuantity = criteria.filter(
+        (obj) => obj.name === "numOfOrder"
+      )[0].weight;
+      const weightTime = criteria.filter((obj) => obj.name === "time")[0]
+        .weight;
+      const weightPrice = criteria.filter((obj) => obj.name === "price")[0]
+        .weight;
+      const resultQuantity = quantity * weightQuantity;
+      const resultTime = time * weightTime;
+      const resultPrice = price * weightPrice;
+      resultQuantityArray.push(resultQuantity);
+      resultTimeArray.push(resultTime);
+      resultPriceArray.push(resultPrice);
+    }
+  }
+  console.log(resultQuantityArray, resultTimeArray, resultPriceArray);
+  return {
+    resultQuantityArray,
+    resultTimeArray,
+    resultPriceArray,
+  };
+};
+const alternativeWeightCalc = (scoring, menu) => {
+  if (
+    scoring.resultQuantityArray.length > 0 &&
+    scoring.resultTimeArray.length > 0 &&
+    scoring.resultPriceArray.length > 0
+  ) {
+    const result = [];
+    for (let i = 0; i < scoring.resultQuantityArray.length; i++) {
+      const quantity = scoring.resultQuantityArray[i];
+      const time = scoring.resultTimeArray[i];
+      const price = scoring.resultPriceArray[i];
+      const alternativeScore = quantity + time + price;
+      const obj = {
+        ...menu[i],
+        alternativeScore: alternativeScore,
+      };
+      result.push(obj);
+    }
+
+    return result.sort((a, b) =>
+      a.alternativeScore < b.alternativeScore ? 1 : -1
+    );
+  }
+};
 exports.getMenuAlgoritma = async (req, res) => {
   try {
     const menus = await Menu.findAll().then((menu) => {
@@ -155,9 +256,9 @@ exports.getMenuAlgoritma = async (req, res) => {
         const tempMenu = menu;
         const menuId = menu.id;
         const servingTime = menu.servingTime;
-        console.log(servingTime, "servingTime");
+
         const price = menu.price;
-        console.log(price, "price");
+
         let scoreServingTime = wTime[0];
         if (servingTime <= 5) {
           scoreServingTime = wTime[0];
@@ -197,63 +298,22 @@ exports.getMenuAlgoritma = async (req, res) => {
         resultWTime.push(objResultWTime);
         resultWPrice.push(objResultWPrice);
         if (i === menus.length - 1) {
-          const pricesArray = resultWPrice.map((menu) => menu.price);
-          const timeArray = resultWTime.map((menu) => menu.time);
-          const quantityArray = resultWQuantity.map((menu) => menu.quantity);
-          for (let j = 0; j < criteria.length; j++) {
-            const criteriaName = criteria[j].criteriaName;
-            const criteriaWeight = criteria[j].criteriaWeight;
-            const criteriaRemark = criteria[j].criteriaRemark;
-            if (criteriaName === "price") {
-              const maxPrice = Math.max(...pricesArray);
-              const minPrice = Math.min(...pricesArray);
-              const resultPrice = resultWPrice.map((menu) => {
-                const price = menu.price;
-                const priceResult = (price - minPrice) / (maxPrice - minPrice);
-                return {
-                  menuId: menu.menuId,
-                  price: priceResult,
-                };
-              });
-              console.log(resultPrice, "resultPrice");
-            } else if (criteriaName === "time") {
-              const maxTime = Math.max(...timeArray);
-              const minTime = Math.min(...timeArray);
-              const resultTime = resultWTime.map((menu) => {
-                const time = menu.time;
-                const timeResult = (time - minTime) / (maxTime - minTime);
-                return {
-                  menuId: menu.menuId,
-                  time: timeResult,
-                };
-              });
-              console.log(resultTime, "resultTime");
-            } else if (criteriaName === "quantity") {
-              const maxQuantity = Math.max(...quantityArray);
-              const minQuantity = Math.min(...quantityArray);
-              const resultQuantity = resultWQuantity.map((menu) => {
-                const quantity = menu.quantity;
-                const quantityResult =
-                  (quantity - minQuantity) / (maxQuantity - minQuantity);
-                return {
-                  menuId: menu.menuId,
-                  quantity: quantityResult,
-                };
-              });
-            }
-          }
+          const scoring = calculateScoreHelper(
+            tempMenu,
+            resultWQuantity,
+            resultWTime,
+            resultWPrice,
+            criteria
+          );
+          const criteriaWeight = criteriaWeightCalc(scoring, criteria);
+          const resultRecommendationMenu = alternativeWeightCalc(
+            criteriaWeight,
+            menus
+          );
+          return res.status(200).send({ data: resultRecommendationMenu });
         }
       }
     }
-    console.log(
-      resultWQuantity,
-      "resultWQuantity",
-      resultWTime,
-      "resultWTime",
-      resultWPrice,
-      "resultWPrice"
-    );
-    return res.status(200).send({ data: orderDetail });
   } catch (error) {
     console.log(error);
     return res.status(500).send({ message: "error" });
