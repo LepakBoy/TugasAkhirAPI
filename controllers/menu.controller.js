@@ -152,6 +152,7 @@ exports.getMenuAlgoritma = async (req, res) => {
     if (menus.length > 0 && criteria.length > 0) {
       for (let i = 0; i < menus.length; i++) {
         const menu = menus[i];
+        const tempMenu = menu;
         const menuId = menu.id;
         const servingTime = menu.servingTime;
         console.log(servingTime, "servingTime");
@@ -195,8 +196,53 @@ exports.getMenuAlgoritma = async (req, res) => {
         resultWQuantity.push(objResultWQuantity);
         resultWTime.push(objResultWTime);
         resultWPrice.push(objResultWPrice);
-
-        console.log(count, "count");
+        if (i === menus.length - 1) {
+          const pricesArray = resultWPrice.map((menu) => menu.price);
+          const timeArray = resultWTime.map((menu) => menu.time);
+          const quantityArray = resultWQuantity.map((menu) => menu.quantity);
+          for (let j = 0; j < criteria.length; j++) {
+            const criteriaName = criteria[j].criteriaName;
+            const criteriaWeight = criteria[j].criteriaWeight;
+            const criteriaRemark = criteria[j].criteriaRemark;
+            if (criteriaName === "price") {
+              const maxPrice = Math.max(...pricesArray);
+              const minPrice = Math.min(...pricesArray);
+              const resultPrice = resultWPrice.map((menu) => {
+                const price = menu.price;
+                const priceResult = (price - minPrice) / (maxPrice - minPrice);
+                return {
+                  menuId: menu.menuId,
+                  price: priceResult,
+                };
+              });
+              console.log(resultPrice, "resultPrice");
+            } else if (criteriaName === "time") {
+              const maxTime = Math.max(...timeArray);
+              const minTime = Math.min(...timeArray);
+              const resultTime = resultWTime.map((menu) => {
+                const time = menu.time;
+                const timeResult = (time - minTime) / (maxTime - minTime);
+                return {
+                  menuId: menu.menuId,
+                  time: timeResult,
+                };
+              });
+              console.log(resultTime, "resultTime");
+            } else if (criteriaName === "quantity") {
+              const maxQuantity = Math.max(...quantityArray);
+              const minQuantity = Math.min(...quantityArray);
+              const resultQuantity = resultWQuantity.map((menu) => {
+                const quantity = menu.quantity;
+                const quantityResult =
+                  (quantity - minQuantity) / (maxQuantity - minQuantity);
+                return {
+                  menuId: menu.menuId,
+                  quantity: quantityResult,
+                };
+              });
+            }
+          }
+        }
       }
     }
     console.log(
