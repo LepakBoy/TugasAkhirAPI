@@ -1,6 +1,7 @@
 const db = require("../models");
 const Order = db.order;
 const OrderDetail = db.orderDetail;
+const Canteen = db.canteenStatus
 
 exports.getAllOrder = async (req, res) => {
   let errCode = 0;
@@ -59,24 +60,38 @@ exports.getOrderById = async (req, res) => {
 };
 
 exports.createOrder = async (req, res) => {
+  const canteentStatus = await Canteen.findAll().then((res) => {
+  return JSON.parse(JSON.stringify(res))[0].isOpen
+ 
+  })
+  
+
   try {
-    const { orderDetails, userId, status, totalPrice, totalQty } = req.body;
-    const newOrder = await Order.create(
-      {
-        userId: userId,
-        totalPrice: totalPrice,
-        status: status,
-        totalQty: totalQty,
-        orderDetails: orderDetails,
-      },
-      {
-        include: "orderDetails",
-      }
-    );
-    res.status(200).send({
-      message: "success",
-      data: { newOrder },
-    });
+    if(!canteentStatus){
+      res.status(400).send({
+        message: "failed",
+        reason: "Canteen is close"
+      });
+    }else{
+      const { orderDetails, userId, status, totalPrice, totalQty } = req.body;
+      const newOrder = await Order.create(
+        {
+          userId: userId,
+          totalPrice: totalPrice,
+          status: status,
+          totalQty: totalQty,
+          orderDetails: orderDetails,
+        },
+        {
+          include: "orderDetails",
+        }
+      );
+      res.status(200).send({
+        message: "success",
+        data: { newOrder },
+      });
+    }
+
   } catch (error) {
     console.log(error, "error create order");
     res.status(500).send({ message: "error", data: error });
