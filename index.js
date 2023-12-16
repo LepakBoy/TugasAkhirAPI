@@ -19,12 +19,14 @@ const User = db.user;
 const Menu = db.menu;
 const Order = db.order;
 const criteria = db.criteria;
+const Canteen = db.canteenStatus
 // db.sequelize.sync();
 // force: true will drop the table if it already exists
 db.sequelize.sync({ alter: true }).then(async () => {
   createUser();
   createMenu();
   createCriteria();
+  // initCanteenStatus()
 });
 
 // simple route
@@ -47,6 +49,11 @@ app.listen(port, () => {
 });
 
 // #INIT DATA TO DB
+async function initCanteenStatus(){
+Canteen.create({
+  isOpen: true
+})
+}
 async function createUser() {
   const existingUser = await User.findOne({
     where: { email: "user@user.com" },

@@ -21,4 +21,7 @@ module.exports = function (app) {
   );
 
   app.post("/api/auth/signin", AUTHcontroller.signin);
+  app.post("/api/auth/update-password", AUTHcontroller.updatePassword)
+  app.get("/api/auth/canteen-status", AUTHcontroller.canteenStatus)
+  app.post("/api/auth/update-canteen-status", AUTHcontroller.updateCanteenStatus)
 };

@@ -2,7 +2,8 @@ const OrderController = require("../controllers/order.controller");
 const { authJwt } = require("../middleware");
 
 module.exports = function (app) {
-  app.get("/api/order", [authJwt.verifyToken], OrderController.getAllOrder);
+  // app.get("/api/order", [authJwt.verifyToken], OrderController.getAllOrder);
+  app.get("/api/order", OrderController.getAllOrder);
   app.post("/api/order", OrderController.createOrder);
   app.get("/api/order/orderById", OrderController.getOrderById);
   app.get("/api/order/init-order", OrderController.initOrder);

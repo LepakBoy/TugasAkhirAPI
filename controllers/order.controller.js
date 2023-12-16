@@ -82,7 +82,7 @@ exports.createOrder = async (req, res) => {
     res.status(500).send({ message: "error", data: error });
   }
 };
-async function createOrder() {
+async function generateDummyOrder() {
   try {
     const existingOrder = await Order.findAll();
 
@@ -339,7 +339,7 @@ async function createOrder() {
   }
 }
 exports.initOrder = async (req, res) => {
-  await createOrder();
+  await generateDummyOrder();
   res.status(200).send({ message: "success" });
 };
 
@@ -347,6 +347,7 @@ exports.getAllOrderDetails = async (req, res) => {
   let errCode = 0;
   let resMessage = "";
 
+  console.log("aa")
   const orderDetails = await OrderDetail.findAll()
     .then((orderDetail) => {
       if (!orderDetail) {

@@ -169,7 +169,7 @@ const criteriaWeightCalc = (scoring, criteria) => {
       resultPriceArray.push(resultPrice);
     }
   }
-  console.log(resultQuantityArray, resultTimeArray, resultPriceArray);
+  // console.log(resultQuantityArray, resultTimeArray, resultPriceArray);
   return {
     resultQuantityArray,
     resultTimeArray,
@@ -194,8 +194,8 @@ const alternativeWeightCalc = (scoring, menu) => {
       };
       result.push(obj);
     }
-
-    return result.sort((a, b) =>
+const filter = result.filter((x)=> x.category === "FOOD")
+    return filter.sort((a, b) =>
       a.alternativeScore < b.alternativeScore ? 1 : -1
     );
   }
@@ -259,6 +259,7 @@ exports.getMenuAlgoritma = async (req, res) => {
 
         const price = menu.price;
 
+        // ##C2
         let scoreServingTime = wTime[0];
         if (servingTime <= 5) {
           scoreServingTime = wTime[0];
@@ -267,6 +268,7 @@ exports.getMenuAlgoritma = async (req, res) => {
         } else if (servingTime > 10) {
           scoreServingTime = wTime[2];
         }
+        // ##C3
         let scorePrice = wPrice[0];
         if (price <= 7000) {
           scorePrice = wPrice[0];
@@ -278,10 +280,13 @@ exports.getMenuAlgoritma = async (req, res) => {
           scorePrice = wPrice[3];
         }
 
+        // ##C1
         const count = orderDetail.filter(
           (obj) =>
             obj.menuId === menuId && new Date(obj.createdDate) >= fiveDaysAgo
         ).length;
+
+
         const objResultWQuantity = {
           menuId: menuId,
           quantity: count,
