@@ -8,4 +8,6 @@ module.exports = function (app) {
   app.get("/api/order/orderById", OrderController.getOrderById);
   app.get("/api/order/init-order", OrderController.initOrder);
   app.get("/api/order/orderDetails", OrderController.getAllOrderDetails);
+
+  app.post("/api/order/update-status", OrderController.updateOrderStatus)
 };

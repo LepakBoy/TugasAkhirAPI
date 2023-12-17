@@ -60,6 +60,32 @@ exports.getOrderById = async (req, res) => {
   res.status(errCode).send({ message: resMessage, data: targetOrder });
 };
 
+exports.updateOrderStatus = async(req, res) => {
+  errCode = 0;
+  resMessage = "";
+
+  const {id, status} = req.body
+
+  await Order.findOne({where: {id: id}}).then(async(order) => {
+    if(!order){
+      return res.status(404).send({messages: "Order not found", status: "failed"})
+    }
+
+    return await Order.update({status: status},{where: {id: id}}).then((res) => {
+      errCode = 200;
+      resMessage = "success";
+      return JSON.parse(JSON.stringify(res))
+    })
+  }).catch((error) => {
+    console.log(error, "errrppprrr");
+    errCode = 404;
+    resMessage = "failed";
+    return error;
+})
+res.status(errCode).send({ message: resMessage });
+
+}
+
 exports.createOrder = async (req, res) => {
   const canteentStatus = await Canteen.findAll().then((res) => {
   return JSON.parse(JSON.stringify(res))[0].isOpen
