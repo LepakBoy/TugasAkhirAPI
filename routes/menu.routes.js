@@ -9,4 +9,6 @@ module.exports = function (app) {
   app.post("/api/menu/update-availabilty", MenuContoller.updateAvailability);
 
   app.get("/api/menu/menuById", MenuContoller.getMenuById);
+
+  app.post("/api/menu/update-menu", MenuContoller.updateMenu)
 };

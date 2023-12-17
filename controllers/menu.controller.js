@@ -72,6 +72,34 @@ exports.updateAvailability = async (req, res) => {
   res.status(errCode).send({ message: resMessage, data: targetMenu });
 };
 
+exports.updateMenu = async (req, res) =>{
+  errCode = 0;
+  resMessage = "";
+
+  const {id, name, price, description, servingTime, category} = req.body
+  await Menu.findOne({
+    where: {
+      id: id
+    }
+  }).then(async(targetMenu) => {
+    if(!targetMenu){
+      return res.status(404).send({messages: "Menu not found", status: "failed"})
+    }
+
+    return await Menu.update({name: name, price: Number(price), description: description, servingTime: Number(servingTime), category: category}, {where: {id: id}}).then((res)=> {
+      errCode = 200;
+  resMessage = "success";
+  return JSON.parse(JSON.stringify(res))
+    })
+  }).catch((error) => {
+    console.log(error);
+    errCode = 404;
+    resMessage = "failed";
+  
+    return error;})
+    res.status(errCode).send({ message: resMessage });
+}
+
 exports.getMenuById = async (req, res) => {
   errCode = 0;
   resMessage = "";

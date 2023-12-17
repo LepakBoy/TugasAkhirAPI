@@ -2,6 +2,7 @@ const db = require("../models");
 const Order = db.order;
 const OrderDetail = db.orderDetail;
 const Canteen = db.canteenStatus
+const Menus = db.menu
 
 exports.getAllOrder = async (req, res) => {
   let errCode = 0;
@@ -65,7 +66,6 @@ exports.createOrder = async (req, res) => {
  
   })
   
-
   try {
     if(!canteentStatus){
       res.status(400).send({
@@ -74,6 +74,10 @@ exports.createOrder = async (req, res) => {
       });
     }else{
       const { orderDetails, userId, status, totalPrice, totalQty } = req.body;
+    //  const aa = orderDetails.map(async(x)=> {
+    //    await Menus.findOne({where: {id: x.menuId}})
+    //   })
+    //   console.log(aa, "orderDetals")
       const newOrder = await Order.create(
         {
           userId: userId,
