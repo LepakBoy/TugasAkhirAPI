@@ -204,6 +204,7 @@ const criteriaWeightCalc = (scoring, criteria) => {
     resultPriceArray,
   };
 };
+
 const alternativeWeightCalc = (scoring, menu) => {
   if (
     scoring.resultQuantityArray.length > 0 &&
@@ -223,11 +224,12 @@ const alternativeWeightCalc = (scoring, menu) => {
       result.push(obj);
     }
 const filter = result.filter((x)=> x.category === "FOOD")
-    return filter.sort((a, b) =>
+    return result.sort((a, b) =>
       a.alternativeScore < b.alternativeScore ? 1 : -1
     );
   }
 };
+
 exports.getMenuAlgoritma = async (req, res) => {
   try {
     const menus = await Menu.findAll().then((menu) => {

@@ -3,10 +3,22 @@ const Order = db.order;
 const OrderDetail = db.orderDetail;
 const Canteen = db.canteenStatus
 const Menus = db.menu
+const OrderDetails = db.orderDetail
 
 exports.getAllOrder = async (req, res) => {
   let errCode = 0;
   let resMessage = "";
+
+const orderDetails = await OrderDetail.findAll().then((details) => {
+  if (!details) {
+    errCode = 404;
+    resMessage = "not found";
+    return;
+    
+  }
+  const allOrderDetails = JSON.parse(JSON.stringify(details))
+  return allOrderDetails
+})
 
   const orders = await Order.findAll()
     .then((order) => {
@@ -14,8 +26,17 @@ exports.getAllOrder = async (req, res) => {
         errCode = 404;
         resMessage = "not found";
         return;
+        
       }
+console.log(orderDetails, "cobaaa")
+      const allOrder = JSON.parse(JSON.stringify(order))
+      const unfinishedOrder = allOrder.filter((x) => {return x.status !== "FINISHED"})
 
+      // for(let i = 0; i < allOrderDetails.length; i++){
+      //   unfinishedOrder[i]
+      // }
+
+      // console.log(unfinishedOrder, "unfinised")
       errCode = 200;
       resMessage = "success";
       return JSON.parse(JSON.stringify(order));
@@ -59,6 +80,30 @@ exports.getOrderById = async (req, res) => {
 
   res.status(errCode).send({ message: resMessage, data: targetOrder });
 };
+
+exports.getOrderByUser = async (req, res) => {
+  errCode = 0;
+  resMessage = "";
+
+  const {userId} = req.params;
+
+  const result = await Order.findAll({where: {userId: userId}}).then((res) => {
+    if(!res){
+      return res.status(404).send({messages: "Order not found", status: "failed", data: []});
+      
+    }
+    errCode = 200;
+    resMessage = "success";
+    return JSON.parse(JSON.stringify(res))
+  }).catch((error) => {
+    console.log(error, "errrppprrr");
+    errCode = 404;
+    resMessage = "failed";
+    return error;
+})
+
+res.status(errCode).send({message: resMessage, data: result})
+}
 
 exports.updateOrderStatus = async(req, res) => {
   errCode = 0;

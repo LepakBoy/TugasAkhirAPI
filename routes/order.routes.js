@@ -10,4 +10,5 @@ module.exports = function (app) {
   app.get("/api/order/orderDetails", OrderController.getAllOrderDetails);
 
   app.post("/api/order/update-status", OrderController.updateOrderStatus)
+  app.get("/api/order/order-user/:userId", OrderController.getOrderByUser)
 };

@@ -175,7 +175,7 @@ async function createMenu() {
       {
         id: "1fb6c7fa-2f35-45c6-a3a1-dfc33195d85c",
         name: "Bubur kacang ijo",
-        category: "FOOD",
+        category: "SNACK",
         description: "Bubur kacang ijo ",
         isAvailable: true,
         image: "kacang-ijo",
@@ -195,7 +195,7 @@ async function createMenu() {
       {
         id: "2ea751aa-c3b9-4324-9e02-448ae01fbdcb",
         name: "Lumpia telor",
-        category: "FOOD",
+        category: "SNACK",
         description: "Lumpia telor dengan daging",
         isAvailable: false,
         image: "lumpia-telor",
@@ -215,7 +215,7 @@ async function createMenu() {
       {
         id: "5af441e6-c250-4d2c-a260-33b558bbdb3b",
         name: "Roti bakar",
-        category: "FOOD",
+        category: "SNACK",
         description: "Roti bakar rasa cokelat dengan krimer",
         isAvailable: true,
         image: "roti-bakar",
