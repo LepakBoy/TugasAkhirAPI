@@ -72,33 +72,47 @@ exports.updateAvailability = async (req, res) => {
   res.status(errCode).send({ message: resMessage, data: targetMenu });
 };
 
-exports.updateMenu = async (req, res) =>{
+exports.updateMenu = async (req, res) => {
   errCode = 0;
   resMessage = "";
 
-  const {id, name, price, description, servingTime, category} = req.body
+  const { id, name, price, description, servingTime, category } = req.body;
   await Menu.findOne({
     where: {
-      id: id
-    }
-  }).then(async(targetMenu) => {
-    if(!targetMenu){
-      return res.status(404).send({messages: "Menu not found", status: "failed"})
-    }
+      id: id,
+    },
+  })
+    .then(async (targetMenu) => {
+      if (!targetMenu) {
+        return res
+          .status(404)
+          .send({ messages: "Menu not found", status: "failed" });
+      }
 
-    return await Menu.update({name: name, price: Number(price), description: description, servingTime: Number(servingTime), category: category}, {where: {id: id}}).then((res)=> {
-      errCode = 200;
-  resMessage = "success";
-  return JSON.parse(JSON.stringify(res))
+      return await Menu.update(
+        {
+          name: name,
+          price: Number(price),
+          description: description,
+          servingTime: Number(servingTime),
+          category: category,
+        },
+        { where: { id: id } }
+      ).then((res) => {
+        errCode = 200;
+        resMessage = "success";
+        return JSON.parse(JSON.stringify(res));
+      });
     })
-  }).catch((error) => {
-    console.log(error);
-    errCode = 404;
-    resMessage = "failed";
-  
-    return error;})
-    res.status(errCode).send({ message: resMessage });
-}
+    .catch((error) => {
+      console.log(error);
+      errCode = 404;
+      resMessage = "failed";
+
+      return error;
+    });
+  res.status(errCode).send({ message: resMessage });
+};
 
 exports.getMenuById = async (req, res) => {
   errCode = 0;
@@ -141,7 +155,7 @@ const calculateScoreHelper = (
   const indexTimeArray = [];
   const indexPriceArray = [];
   for (let i = 0; i < resultWQuantity.length; i++) {
-    const indexQuantity = pricesArray[i] / Math.max(...pricesArray);
+    const indexQuantity = quantityArray[i] / Math.max(...quantityArray);
     indexQuantityArray.push(indexQuantity);
   }
   for (let i = 0; i < resultWTime.length; i++) {
@@ -223,7 +237,6 @@ const alternativeWeightCalc = (scoring, menu) => {
       };
       result.push(obj);
     }
-const filter = result.filter((x)=> x.category === "FOOD")
     return result.sort((a, b) =>
       a.alternativeScore < b.alternativeScore ? 1 : -1
     );
@@ -314,12 +327,16 @@ exports.getMenuAlgoritma = async (req, res) => {
         const count = orderDetail.filter(
           (obj) =>
             obj.menuId === menuId && new Date(obj.createdDate) >= fiveDaysAgo
-        ).length;
+        );
 
-
+        const sumCount = count.reduce((a, b) => {
+          return a + b.qty;
+        }, 0);
+        console.log(sumCount, "sum count");
+        // console.log(count, "count");
         const objResultWQuantity = {
           menuId: menuId,
-          quantity: count,
+          quantity: sumCount,
         };
         const objResultWTime = {
           menuId: menuId,

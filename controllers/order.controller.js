@@ -1,47 +1,41 @@
 const db = require("../models");
 const Order = db.order;
 const OrderDetail = db.orderDetail;
-const Canteen = db.canteenStatus
-const Menus = db.menu
-const OrderDetails = db.orderDetail
+const Canteen = db.canteenStatus;
+const Menus = db.menu;
 
 exports.getAllOrder = async (req, res) => {
   let errCode = 0;
   let resMessage = "";
 
-const orderDetails = await OrderDetail.findAll().then((details) => {
-  if (!details) {
-    errCode = 404;
-    resMessage = "not found";
-    return;
-    
-  }
-  const allOrderDetails = JSON.parse(JSON.stringify(details))
-  return allOrderDetails
-})
-
-  const orders = await Order.findAll()
-    .then((order) => {
+  const orders = await Order.findAll({
+    include: [{ model: OrderDetail, as: "orderDetails" }],
+  })
+    .then(async (order) => {
+      console.log(JSON.parse(JSON.stringify(order)), "order");
       if (!order) {
         errCode = 404;
         resMessage = "not found";
         return;
-        
       }
-console.log(orderDetails, "cobaaa")
-      const allOrder = JSON.parse(JSON.stringify(order))
-      const unfinishedOrder = allOrder.filter((x) => {return x.status !== "FINISHED"})
+      // for(let i = 0; i < order.length; i++){
+      //   if(order[i].orderDetails && order[i].orderDetails.length > 0 ){
+      //     const newOrderDetails = order[i].orderDetails.map(async(x) => {
+      //     const menudetail=  await Menus.findOne({where: {id: x.menuId}})
+      //       return {...order[i].orderDetails, menudetail: menudetail }
+      //     })
 
-      // for(let i = 0; i < allOrderDetails.length; i++){
-      //   unfinishedOrder[i]
+      //   }
+
       // }
+      const allOrder = JSON.parse(JSON.stringify(order));
+      const unfinishedOrder = allOrder.filter((x) => {
+        return x.status !== "FINISHED";
+      });
 
-      // console.log(unfinishedOrder, "unfinised")
       errCode = 200;
       resMessage = "success";
-      return JSON.parse(JSON.stringify(order));
-      // simulate error handling
-      // throw new Error("test");
+      return JSON.parse(JSON.stringify(unfinishedOrder));
     })
     .catch((error) => {
       errCode = 404;
@@ -85,70 +79,96 @@ exports.getOrderByUser = async (req, res) => {
   errCode = 0;
   resMessage = "";
 
-  const {userId} = req.params;
+  const { userId } = req.params;
 
-  const result = await Order.findAll({where: {userId: userId}}).then((res) => {
-    if(!res){
-      return res.status(404).send({messages: "Order not found", status: "failed", data: []});
-      
-    }
-    errCode = 200;
-    resMessage = "success";
-    return JSON.parse(JSON.stringify(res))
-  }).catch((error) => {
-    console.log(error, "errrppprrr");
-    errCode = 404;
-    resMessage = "failed";
-    return error;
-})
+  const result = await Order.findAll({
+    where: { userId: userId },
+    include: [{ model: OrderDetail, as: "orderDetails" }],
+  })
+    .then((res) => {
+      if (!res) {
+        return res
+          .status(404)
+          .send({ messages: "Order not found", status: "failed", data: [] });
+      }
+      errCode = 200;
+      resMessage = "success";
+      return JSON.parse(JSON.stringify(res));
+    })
+    .catch((error) => {
+      console.log(error, "errrppprrr");
+      errCode = 404;
+      resMessage = "failed";
+      return error;
+    });
 
-res.status(errCode).send({message: resMessage, data: result})
-}
+  res.status(errCode).send({ message: resMessage, data: result });
+};
 
-exports.updateOrderStatus = async(req, res) => {
+exports.updateOrderStatus = async (req, res) => {
   errCode = 0;
   resMessage = "";
 
-  const {id, status} = req.body
+  const { id, status } = req.body;
 
-  await Order.findOne({where: {id: id}}).then(async(order) => {
-    if(!order){
-      return res.status(404).send({messages: "Order not found", status: "failed"})
-    }
+  await Order.findOne({ where: { id: id } })
+    .then(async (order) => {
+      if (!order) {
+        return res
+          .status(404)
+          .send({ messages: "Order not found", status: "failed" });
+      }
 
-    return await Order.update({status: status},{where: {id: id}}).then((res) => {
-      errCode = 200;
-      resMessage = "success";
-      return JSON.parse(JSON.stringify(res))
+      return await Order.update({ status: status }, { where: { id: id } }).then(
+        (res) => {
+          errCode = 200;
+          resMessage = "success";
+          return JSON.parse(JSON.stringify(res));
+        }
+      );
     })
-  }).catch((error) => {
-    console.log(error, "errrppprrr");
-    errCode = 404;
-    resMessage = "failed";
-    return error;
-})
-res.status(errCode).send({ message: resMessage });
-
-}
+    .catch((error) => {
+      console.log(error, "errrppprrr");
+      errCode = 404;
+      resMessage = "failed";
+      return error;
+    });
+  res.status(errCode).send({ message: resMessage });
+};
 
 exports.createOrder = async (req, res) => {
   const canteentStatus = await Canteen.findAll().then((res) => {
-  return JSON.parse(JSON.stringify(res))[0].isOpen
- 
-  })
-  
+    return JSON.parse(JSON.stringify(res))[0].isOpen;
+  });
+
+  let statusItem = [];
+
+  for (let i = 0; i < req.body.orderDetails.length; i++) {
+    await Menus.findOne({
+      where: { id: req.body.orderDetails[i].menuId },
+    }).then((res) => {
+      console.log(JSON.parse(JSON.stringify(res)), "resss");
+      statusItem.push(JSON.parse(JSON.stringify(res.isAvailable)));
+    });
+  }
+
   try {
-    if(!canteentStatus){
+    if (!canteentStatus) {
       res.status(400).send({
         message: "failed",
-        reason: "Canteen is close"
+        reason: "Canteen is close",
       });
-    }else{
+    } else if (statusItem.includes(false)) {
+      res.status(400).send({
+        message: "failed",
+        reason: "There is unavailable menu on your order",
+      });
+    } else {
       const { orderDetails, userId, status, totalPrice, totalQty } = req.body;
-    //  const aa = orderDetails.map(async(x)=> {
-    //    await Menus.findOne({where: {id: x.menuId}})
-    //   })
-    //   console.log(aa, "orderDetals")
+      //  const aa = orderDetails.map(async(x)=> {
+      //    await Menus.findOne({where: {id: x.menuId}})
+      //   })
+      //   console.log(aa, "orderDetals")
       const newOrder = await Order.create(
         {
           userId: userId,
@@ -166,7 +186,6 @@ exports.createOrder = async (req, res) => {
         data: { newOrder },
       });
     }
-
   } catch (error) {
     console.log(error, "error create order");
     res.status(500).send({ message: "error", data: error });
@@ -437,7 +456,7 @@ exports.getAllOrderDetails = async (req, res) => {
   let errCode = 0;
   let resMessage = "";
 
-  console.log("aa")
+  console.log("aa");
   const orderDetails = await OrderDetail.findAll()
     .then((orderDetail) => {
       if (!orderDetail) {
