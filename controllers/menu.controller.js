@@ -332,7 +332,7 @@ exports.getMenuAlgoritma = async (req, res) => {
         const sumCount = count.reduce((a, b) => {
           return a + b.qty;
         }, 0);
-        console.log(sumCount, "sum count");
+        // console.log(sumCount, "sum count");
         // console.log(count, "count");
         const objResultWQuantity = {
           menuId: menuId,

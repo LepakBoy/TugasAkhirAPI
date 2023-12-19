@@ -12,30 +12,37 @@ exports.getAllOrder = async (req, res) => {
     include: [{ model: OrderDetail, as: "orderDetails" }],
   })
     .then(async (order) => {
-      console.log(JSON.parse(JSON.stringify(order)), "order");
       if (!order) {
         errCode = 404;
         resMessage = "not found";
         return;
       }
-      // for(let i = 0; i < order.length; i++){
-      //   if(order[i].orderDetails && order[i].orderDetails.length > 0 ){
-      //     const newOrderDetails = order[i].orderDetails.map(async(x) => {
-      //     const menudetail=  await Menus.findOne({where: {id: x.menuId}})
-      //       return {...order[i].orderDetails, menudetail: menudetail }
-      //     })
 
-      //   }
-
-      // }
       const allOrder = JSON.parse(JSON.stringify(order));
+
       const unfinishedOrder = allOrder.filter((x) => {
         return x.status !== "FINISHED";
       });
 
+      const menuAll = await Menus.findAll().then((res) => {
+        const aa = JSON.parse(JSON.stringify(res));
+        const assignMenuNamesToOrderDetails = (orderArray, menuArray) => {
+          return orderArray.map((order) => {
+            const updatedOrderDetails = order.orderDetails.map((detail) => {
+              const menu = menuArray.find((menu) => menu.id === detail.menuId);
+              return { ...detail, name: menu ? menu.name : "Unknown" };
+            });
+
+            return { ...order, orderDetails: updatedOrderDetails };
+          });
+        };
+        const resultjoin = assignMenuNamesToOrderDetails(unfinishedOrder, aa);
+        return resultjoin;
+      });
+
       errCode = 200;
       resMessage = "success";
-      return JSON.parse(JSON.stringify(unfinishedOrder));
+      return JSON.parse(JSON.stringify(menuAll));
     })
     .catch((error) => {
       errCode = 404;
@@ -85,7 +92,7 @@ exports.getOrderByUser = async (req, res) => {
     where: { userId: userId },
     include: [{ model: OrderDetail, as: "orderDetails" }],
   })
-    .then((res) => {
+    .then(async (res) => {
       if (!res) {
         return res
           .status(404)
@@ -93,7 +100,25 @@ exports.getOrderByUser = async (req, res) => {
       }
       errCode = 200;
       resMessage = "success";
-      return JSON.parse(JSON.stringify(res));
+
+      const allOrder = JSON.parse(JSON.stringify(res));
+
+      const menuAll = await Menus.findAll().then((res) => {
+        const aa = JSON.parse(JSON.stringify(res));
+        const assignMenuNamesToOrderDetails = (orderArray, menuArray) => {
+          return orderArray.map((order) => {
+            const updatedOrderDetails = order.orderDetails.map((detail) => {
+              const menu = menuArray.find((menu) => menu.id === detail.menuId);
+              return { ...detail, name: menu ? menu.name : "Unknown" };
+            });
+
+            return { ...order, orderDetails: updatedOrderDetails };
+          });
+        };
+        const resultjoin = assignMenuNamesToOrderDetails(allOrder, aa);
+        return resultjoin;
+      });
+      return JSON.parse(JSON.stringify(menuAll));
     })
     .catch((error) => {
       console.log(error, "errrppprrr");
@@ -147,7 +172,7 @@ exports.createOrder = async (req, res) => {
     await Menus.findOne({
       where: { id: req.body.orderDetails[i].menuId },
     }).then((res) => {
-      console.log(JSON.parse(JSON.stringify(res)), "resss");
+      // console.log(JSON.parse(JSON.stringify(res)), "resss");
       statusItem.push(JSON.parse(JSON.stringify(res.isAvailable)));
     });
   }
@@ -456,7 +481,7 @@ exports.getAllOrderDetails = async (req, res) => {
   let errCode = 0;
   let resMessage = "";
 
-  console.log("aa");
+  // console.log("aa");
   const orderDetails = await OrderDetail.findAll()
     .then((orderDetail) => {
       if (!orderDetail) {
